@@ -5,9 +5,7 @@ Created on Fri Oct 14 13:38:51 2022
 @author: abelw
 """
 
-#CURRENTLY UNFINISHED
-
-def broken_sol_a(filepath):
+def sol_a(filepath):
     
     with open(filepath) as file:
         data = file.readlines()
@@ -29,25 +27,25 @@ def broken_sol_a(filepath):
     y_dims = []
     
     for pair in tracks:
-        x_dims.append(pair[0][0])
-        x_dims.append(pair[1][0])
+        x_dims.append(int(pair[0][0]))
+        x_dims.append(int(pair[1][0]))
         
-        y_dims.append(pair[0][1])
-        y_dims.append(pair[1][1])
+        y_dims.append(int(pair[0][1]))
+        y_dims.append(int(pair[1][1]))
     
-    row_size = int(max(x_dims))
-    number_of_rows = int(max(y_dims))
+    row_size = max(x_dims)+1
+    number_of_rows = max(y_dims)+1
     
     board = []
     base_board = []
     blank_row = []
-    for i in range(row_size):
-        blank_row.append(0)
+
+    print(number_of_rows)
+    print(row_size)
     
     for i in range(number_of_rows):
-        board.append(blank_row)
-        base_board.append(blank_row)
-    
+        board.append([0]*row_size)
+        
     
     
     for item in tracks:
@@ -78,65 +76,132 @@ def broken_sol_a(filepath):
             #print(y_start, y_end)
         
         if horizontal == True:
-            points = []
-            y_val = y_start-1
-            for x_val in range(x_start, x_end):
-                points.append([y_val, x_val])
-            for coords in points:
-                print(coords)
-                print(coords[0])
-                print(board[coords[0]][coords[1]])
-                local_value = board[coords[0]][coords[1]]
-                local_value += 1
-                print(local_value)
-                board[1][1] = local_value
-                print(board)
-                #print(board)
-            
+            y_val = y_start
+            for x_val in range(x_start, x_end+1):
+                print(y_val, x_val)
+                board[y_val][x_val] += 1
         
-        break
+        elif vertical == True:
+            x_val = x_start
+            for y_val in range(y_start, y_end+1):
+                print(y_val, x_val)
+                board[y_val][x_val] += 1
+        
+
+    overlap = 0
+    for row in board:
+        for item in row:
+            if item > 1:
+                overlap += 1
+    
+    return(overlap,board)
 
 
-def sol_a(filepath):
+def sol_b(filepath):
     with open(filepath) as file:
         data = file.readlines()
     
     tracks = []
+
+    
     #Data generation
     for line in data:
         line = line.split(" -> ")
-        line[0] = (line[0].split(","))
-        line[1] = (line[1].strip("\n").split(","))
-        
-        line[0][0], line[0][1] = int(line[0][0]), int(line[0][1])
-        line[1][0], line[1][1] = int(line[1][0]), int(line[1][1])
-        
+        line[0] = line[0].split(",")
+        line[1] = line[1].strip("\n").split(",")
         tracks.append(line)
+     
+    #Board creation
+    x_dims = []
+    y_dims = []
     
-    #Data processing
-    for path in tracks:
-        start = path[0]
-        end = path[1]
+    for pair in tracks:
+        x_dims.append(int(pair[0][0]))
+        x_dims.append(int(pair[1][0]))
         
+        y_dims.append(int(pair[0][1]))
+        y_dims.append(int(pair[1][1]))
+    
+    row_size = max(x_dims)+1
+    number_of_rows = max(y_dims)+1     
+    
+    board = []
         
-        
-        
-        
-        print(start, end)
-        
-        if start[0] == end[0]:
-            print("Same x axis")
+    for i in range(number_of_rows):
+        board.append([0]*row_size)
+    
 
-            print(y_points)
-        elif start[1] == end[1]:
-            print("Same y axis")
+    for item in tracks:
+        #print(item)
         
+        horizontal, vertical = None, None
+        
+        start = item[0]
+        end = item[1]
+        
+        x_start = int(start[0])
+        x_end = int(end[0])
+        
+        y_start = int(start[1])
+        y_end = int(end[1])
+        
+        if x_start == x_end:
+            vertical = True
+        if y_start == y_end:
+            horizontal = True
+            #print(y_start, y_end)
+            
+        
+        if horizontal == True:
+            y_val = y_start
+            if x_start > x_end:
+                x_end,x_start = x_start, x_end
+            for x_val in range(x_start, x_end+1):
+                #print(y_val, x_val)
+                board[y_val][x_val] += 1
+        
+        elif vertical == True:
+            x_val = x_start
+            if y_start > y_end:
+                y_start, y_end = y_end, y_start
+            for y_val in range(y_start, y_end+1):
+                #print(y_val, x_val)
+                board[y_val][x_val] += 1
+        
+        elif (vertical == None) and (horizontal == None):
+            
+            if x_start > x_end:
+                x_step = -1
+            else:
+                x_step = 1
+                
+            if y_start > y_end:
+                y_step = -1
+            else:
+                y_step = 1
+            
+            x_line = []
+            y_line = []
+            for x_val in range(x_start, x_end, x_step):
+                x_line.append(x_val)
+            
+            for y_val in range(y_start, y_end, y_step):
+                y_line.append(y_val)
+            
+            print (x_line, y_line)
+            
+                            
+    return(board)
+                    
+                        
+
     
     
+
+            
     
     
-    return (tracks)
-    
-    
-    
-test = sol_a("test.txt")
+#test = sol_a("test.txt")
+#experimental = sol_a("input.txt")
+
+test = sol_b("test.txt")
