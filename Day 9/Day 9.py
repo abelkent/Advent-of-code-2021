@@ -7,8 +7,6 @@ Created on Mon Oct 17 21:28:03 2022
 
 def sol_a(filepath):
     
-    
-    
     with open(filepath) as file:
         data = file.readlines()
         data = [element.strip("\n") for element in data]
@@ -65,6 +63,5 @@ def sol_a(filepath):
     
     return(total_risk)
     
-    
+
 test = sol_a("test.txt")
-experimental = sol_a("input.txt")
